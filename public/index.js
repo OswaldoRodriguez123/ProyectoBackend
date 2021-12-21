@@ -1,10 +1,19 @@
 
+let port = 8080;
+fetch('../.env')
+    .then(response => response.text())
+    .then(text => {
+        port = text.split('=')[1];
+    });
+
+const $ = selector => document.querySelector(selector);
+
 const send = () => {
     const data = JSON.stringify({
-        nombre: document.getElementById('nombre').value,
-        descripcion: document.getElementById('descripcion').value,
-        precio: document.getElementById('precio').value,
-        imagen: document.getElementById('imagen').value,
+        nombre: $('#nombre').value,
+        descripcion: $('#descripcion').value,
+        precio: $('#precio').value,
+        imagen: $('#imagen').value,
     });
 
     const request = new XMLHttpRequest();
@@ -16,7 +25,7 @@ const send = () => {
         }
     });
     
-    request.open('POST', 'http://localhost:8080/api/productos', true);
+    request.open('POST', `http://localhost:${port}/api/productos`, true);
     request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
     request.send(data);
 }

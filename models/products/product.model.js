@@ -1,6 +1,6 @@
-let { products } = require('../data/data');
+let { products } = require('../../data/data');
 
-class Container{
+class Product{
     async getLastId() {
         const products = await this.getAll();
         const id = products.length > 0 ? Math.max(...products.map(o => o.id), 0) + 1 : 1;
@@ -43,4 +43,4 @@ class Container{
     }
 }
 
-module.exports = Container;
+module.exports = Product;
