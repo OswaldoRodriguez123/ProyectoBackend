@@ -1,9 +1,15 @@
 const Product = require('../../models/products/product.model');
 const product = new Product();
 
+// exports.save = async (req, res) => {
+//     const data = req.body;
+//     res.json(await product.save(data));
+// }
+
 exports.save = async (req, res) => {
     const data = req.body;
-    res.json(await product.save(data));
+    await product.save(data);
+    return res.status(200).redirect("/productos");
 };
 
 exports.getAll = async (req, res) => {

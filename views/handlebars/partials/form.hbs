@@ -1,0 +1,33 @@
+<form action="/api/productos" method="POST">
+    <div class="mb-3">
+        <label for="title" class="form-label">Nombre</label>
+        <input
+            type="text"
+            name="title"
+            id="title"
+            class="form-control"
+            placeholder="Ingresa el nombre"
+        />
+    </div>
+    <div class="mb-3">
+        <label for="price" class="form-label">Precio</label>
+        <input
+            type="number"
+            name="price"
+            id="price"
+            class="form-control"
+            placeholder="Ingresa el precio"
+        />
+    </div>
+    <div class="mb-3">
+        <label for="thumbnail" class="form-label">Foto URL</label>
+        <input
+            type="text"
+            class="form-control"
+            name="thumbnail"
+            id="thumbnail"
+            placeholder="Ingresa la url de la foto"
+        />
+    </div>
+    <button class="btn btn-primary" type="submit">Enviar</button>
+</form>
