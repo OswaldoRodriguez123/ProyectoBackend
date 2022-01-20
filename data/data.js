@@ -1,5 +1,7 @@
 const products = [];
+const messages = [];
 
 module.exports = {
-    products
+    products,
+    messages,
 };

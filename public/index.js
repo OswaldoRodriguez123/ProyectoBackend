@@ -1,32 +1,44 @@
+const socket = io();
+const button = document.getElementById("buttonSend");
 
-let port = 8080;
-fetch('../.env')
-    .then(response => response.text())
-    .then(text => {
-        port = text.split('=')[1];
+const sendMessage = (e) => {
+    e.preventDefault();
+    const inputMessage = document.getElementById("message");
+    const date = new Date();
+    const message = {
+        email: document.getElementById("email").value,
+        year: new Date(Date.now() + 0 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10).split('-').reverse().join('/'),
+        time: date.getHours() +
+        ":" + date.getMinutes() +
+        ":" + date.getSeconds(),
+        message: inputMessage.value,
+    };
+    socket.emit("message", message);
+    inputMessage.value = "";
+    inputMessage.focus();
+};
+
+button.addEventListener("click", sendMessage);
+
+socket.on("products", (products) => {
+    fetch("http://localhost:3000/template/products.tpl")
+    .then((res) => res.text())
+    .then((data) => {
+        const template = Handlebars.compile(data);
+        const html = template({ products });
+        document.getElementById("products").innerHTML = html;
     });
+});
 
-const $ = selector => document.querySelector(selector);
+socket.on("messages", (messages) => {
+    const html = messages.map((mensaje) => {
+        return `<p class="mt-3">
+                    <span class="text-primary fw-bold">${mensaje.email}</span> 
+                    [<span class="text-danger">${mensaje.year} ${mensaje.time}</span>]: 
+                    <span class="text-success">${mensaje.message}</span>
+                </p>`;
+    })
+    .join("");
 
-const send = () => {
-    const data = JSON.stringify({
-        nombre: $('#nombre').value,
-        descripcion: $('#descripcion').value,
-        precio: $('#precio').value,
-        imagen: $('#imagen').value,
-    });
-
-    const request = new XMLHttpRequest();
-    
-    request.addEventListener('load', function () {
-        if (this.readyState === 4 && this.status === 200) {
-            console.log(this.responseText);
-            alert('Se ha enviado con exito');
-        }
-    });
-    
-    request.open('POST', `http://localhost:${port}/api/productos`, true);
-    request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-    request.send(data);
-}
-
+    document.getElementById("messages").innerHTML = html;
+});

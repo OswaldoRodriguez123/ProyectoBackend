@@ -9,7 +9,7 @@ const product = new Product();
 exports.save = async (req, res) => {
     const data = req.body;
     await product.save(data);
-    return res.status(200).redirect("/productos");
+    return res.status(200).redirect("/");
 };
 
 exports.getAll = async (req, res) => {
