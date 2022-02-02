@@ -47,36 +47,36 @@ const routes = require('./routes/app.routes');
 
 //SOCKET.IO
 
-const path = require("path");
-const http = require("http");
-const server = http.createServer(app);
-const io = require("socket.io")(server);
-let { messages, products } = require('./data/data');
+// const path = require("path");
+// const http = require("http");
+// const server = http.createServer(app);
+// const io = require("socket.io")(server);
+// let { messages, products } = require('./data/data');
 
-app.use(express.static(__dirname + "/public"));
-app.get("/", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "./public/index.html"));
-});
+// app.use(express.static(__dirname + "/public"));
+// app.get("/", (req, res) => {
+//   res.sendFile(path.resolve(__dirname, "./public/index.html"));
+// });
 
-const emitMessages = () => {
-  io.sockets.emit("messages", messages);
-};
+// const emitMessages = () => {
+//   io.sockets.emit("messages", messages);
+// };
 
-io.on("connection", (socket) => {
-    emitMessages();
-    socket.on("message", (message) => {
-        if (message.email) {
-            messages.push(message);
-            emitMessages();
-        }
-    });
-  
-    socket.emit("products", products);
-});
+// io.on("connection", (socket) => {
+//   emitMessages();
+//   socket.on("message", (message) => {
+//     if (message.email) {
+//       messages.push(message);
+//       emitMessages();
+//     }
+//   });
 
-server.listen(3000, () => {
-    console.log("Aplicación escuchando en el puerto 3000");
-});
+//   socket.emit("products", products);
+// });
+
+// server.listen(3000, () => {
+//   console.log("Aplicación escuchando en el puerto 3000");
+// });
 
 // END SOCKET.IO
 
@@ -85,9 +85,9 @@ app.use(morgan('tiny'));
 app.use('/api', routes);
 
 app.listen(PORT, function () {
-    console.log(`Server escuchando en el puerto ${PORT}.`);
+  console.log(`Server escuchando en el puerto ${PORT}.`);
 });
 
 app.on('error', error => {
-    console.log(error.message);
+  console.log(error.message);
 });

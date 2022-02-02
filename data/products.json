@@ -1,0 +1,32 @@
+[
+  {
+    "id": "26b16a56-6ff3-4bae-bf83-a2a913041461",
+    "timeStamp": 1643218970158,
+    "name": "Macbook PRO",
+    "description": "Computadora Apple",
+    "code": 321,
+    "thumbnail": "https://home.ripley.cl/store/Attachment/WOP/D113/2000383032504/2000383032504_2.jpg",
+    "price": 500,
+    "stock": 10
+  },
+  {
+    "id": "42310e48-e052-475b-b2dc-ff3ae423a8f5",
+    "timeStamp": 1643256357137,
+    "name": "Tablet Samsung",
+    "description": "Ideal para diseño grafico",
+    "code": 365,
+    "thumbnail": "https://images.samsung.com/is/image/samsung/p6pim/ar/sm-t500nzaearo/gallery/ar-galaxy-tab-a7-t500-sm-t500nzaearo-332818011?$720_576_PNG$",
+    "price": 1000,
+    "stock": 10
+  },
+  {
+    "id": "67735e95-ea8c-4dd5-968c-3b7942c67841",
+    "timeStamp": 1643256439629,
+    "name": "Presonus Eris 5",
+    "description": "Mejores parlante para home studio",
+    "code": 500,
+    "thumbnail": "https://pae-web.presonusmusic.com/uploads/products/media/images/eris_e5-website-01-mobile.jpg",
+    "price": 2500,
+    "stock": 50
+  }
+]

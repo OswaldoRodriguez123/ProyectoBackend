@@ -1,46 +1,63 @@
-let { products } = require('../../data/data');
+const {v4: uuidv4} = require("uuid");
+const fs = require("fs/promises");
 
-class Product{
-    async getLastId() {
-        const products = await this.getAll();
-        const id = products.length > 0 ? Math.max(...products.map(o => o.id), 0) + 1 : 1;
-        return id;
+module.exports = class Product {
+  constructor() {
+    this.products = [];
+    this.load();
+  }
+
+  load() {
+    try {
+      const load = async () => {
+        const data = await fs.readFile("./data/products.json", "utf-8");
+        this.products = JSON.parse(data);
+      };
+      load();
+    } catch (error) {
+      console.log(error.message);
+      this.products = [];
     }
-    async save(data) {
-        try {
-            const id = await this.getLastId();
-            data.id = id;
-            products.push(data);
-        } catch (error) {
-            console.log(error);
-        }
-        return await this.getAll();
+  }
+
+  getAllOrById(id) {
+    if (id) {
+      return this.products.find((product) => product.id === id);
     }
-    async getAll() {
-        return products;
+    return this.products;
+  }
+  save(product) {
+    const itemComplete = {id: uuidv4(), timeStamp: Date.now(), ...product};
+    this.products.push(itemComplete);
+    this.saveToJson();
+
+    return itemComplete;
+  }
+
+  updateById(id, product) {
+    const index = this.products.findIndex((product) => product.id === id);
+    this.products[index] = {id, ...product};
+
+    this.saveToJson();
+  }
+
+  deleteById(id) {
+    const productExist = this.products.includes((product) => product.id === id);
+    console.log(this.products);
+
+    if (productExist) {
+      const newList = this.products.filter((product) => product.id !== id);
+      this.products = newList;
+      this.saveToJson();
+      return true;
     }
-    async getById(id) {
-        const product = products.find(p => p.id === +id);
-        if (!product) return this.notFound();
-        return product;
-    }
-    async updateById(id, data) {
-        const productIndex = products.findIndex(p => p.id === +id);
-        if (productIndex < 0) return this.notFound();
-        Object.keys(data).forEach(k => {
-            products[productIndex][k] = data[k];
-        });
-        return await this.getAll();
-    }
-    async deleteById(id) {
-        const product = await this.getById(id);
-        if (!product) return this.notFound();
-        products = products.filter(p => p.id !== +id);
-        return await this.getAll();
-    }
-    notFound() {
-        return { 'error': 'Producto no encontrado' };
-    }
+    return;
+  }
+
+  saveToJson() {
+    const save = async () => {
+      await fs.writeFile("./data/products.json", JSON.stringify(this.products), null, 2);
+    };
+    save();
+  }
 }
-
-module.exports = Product;
