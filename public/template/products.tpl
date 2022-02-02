@@ -13,9 +13,9 @@
             {{#each products}}
                 <tr>
                     <th scope="row">{{this.id}}</th>
-                    <td>{{this.title}}</td>
+                    <td>{{this.name}}</td>
                     <td>{{this.price}}</td>
-                    <td><img style="width: 10rem" src={{this.thumbnail}} alt={{this.title}}></td>
+                    <td><img style="width: 10rem" src={{this.thumbnail}} alt={{this.name}}></td>
                 </tr>
             {{/each}}
         </tbody>
