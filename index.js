@@ -1,93 +1,55 @@
-const express = require('express');
+const express = require("express");
 const cors = require('cors');
 const morgan = require('morgan');
 require('dotenv').config();
+const http = require("http");
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const server = http.createServer(app);
+const io = require("socket.io")(server);
+const path = require("path");
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const routes = require('./routes/app.routes');
+const routes = require("./routes/app.routes");
 
-// HANDLEBARS
+const { Chat } = require("./models/index");
 
-// const { engine } = require('express-handlebars');
-// const path = require('path');
-// let { products } = require('./data/data');
+const chat = new Chat("chat");
 
-// app.engine(
-//     'handlebars',
-//     engine({
-//         extname: 'hbs',
-//         defaultLayout: 'main.hbs',
-//         layoutsDir: path.resolve(__dirname, './views/handlebars/layouts'),
-//         partialsDir: path.resolve(__dirname, './views/handlebars/partials'),
-//     })
-// );
-// app.set('view engine', 'handlebars');
-// app.set('views', path.resolve(__dirname, './views/handlebars'));
+const emitMessage = () => {
+  const message = chat.getMessage();
+  message.then((data) => {
+    io.sockets.emit("chat", data);
+  });
+};
 
-// app.get('/', (req, res) => {
-//     res.render('index', {
-//         showProducts: false,
-//         products,
-//     });
-// });
+app.use(express.static(__dirname + "/public"));
 
-// app.get('/productos', (req, res) => {
-//     res.render('index', {
-//         showProducts: true,
-//         products,
-//     });
-// });
+app.get("/", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "./public/index.html"));
+});
 
-// END HANDLEBARS
-
-//SOCKET.IO
-
-// const path = require("path");
-// const http = require("http");
-// const server = http.createServer(app);
-// const io = require("socket.io")(server);
-// let { messages, products } = require('./data/data');
-
-// app.use(express.static(__dirname + "/public"));
-// app.get("/", (req, res) => {
-//   res.sendFile(path.resolve(__dirname, "./public/index.html"));
-// });
-
-// const emitMessages = () => {
-//   io.sockets.emit("messages", messages);
-// };
-
-// io.on("connection", (socket) => {
-//   emitMessages();
-//   socket.on("message", (message) => {
-//     if (message.email) {
-//       messages.push(message);
-//       emitMessages();
-//     }
-//   });
-
-//   socket.emit("products", products);
-// });
-
-// server.listen(3000, () => {
-//   console.log("Aplicación escuchando en el puerto 3000");
-// });
-
-// END SOCKET.IO
+io.on("connection", async (socket) => {
+  emitMessage();
+  socket.on("message", async (message) => {
+    if (message.email) {
+      await chat.addMessage(message);
+      emitMessage();
+    }
+  });
+});
 
 app.use(cors());
 app.use(morgan('tiny'));
 app.use('/api', routes);
 
-app.listen(PORT, function () {
+server.listen(PORT, () => {
   console.log(`Server escuchando en el puerto ${PORT}.`);
 });
 
-app.on('error', error => {
+server.on('error', error => {
   console.log(error.message);
 });

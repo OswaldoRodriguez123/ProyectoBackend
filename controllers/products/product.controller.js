@@ -1,73 +1,66 @@
-const Product = require('../../models/products/product.model');
+const {Product} = require("../../models/index");
+const model = new Product("products");
 
-const model = new Product();
-
-const getAllProducts = async (req, res) => {
-  const {id} = req.params;
-
-  if (id) {
-    const product = await model.getAllOrById(id);
-    return res.status(200).json(product);
-  }
-  const products = await model.getAllOrById();
+const getAll = async (req, res) => {
+  const products = await model.getAll();
   return res.status(200).json(products);
 };
 
-const addProduct = async (req, res) => {
-  const {name, description, code, thumbnail, price, stock} = req.body;
-
-  if (name && description && code && thumbnail && price && stock) {
-    const product = await model.save({
-      name,
-      description,
-      code,
-      thumbnail,
-      price,
-      stock,
-    });
+const getById = async (req, res) => {
+  const {id} = req.params;
+  const product = await model.getById(id);
+  if (product) {
     return res.status(200).json(product);
   }
 
-  return res.status(400).json({error: "Faltan datos"});
+  return res.status(404).json({error: "Producto no encontrado"});
 };
 
-const updateProduct = (req, res) => {
-  const {id} = req.params;
-  const {name, description, code, thumbnail, price, stock} = req.body;
+const save = async (req, res) => {
+  const {name, price, thumbnail} = req.body;
+  if (name && price && thumbnail) {
+    await model.save({name, price, thumbnail});
 
-  if (name || description || code || thumbnail || price || stock) {
-    const product = model.updateById(id, {
-      name,
-      description,
-      code,
-      thumbnail,
-      price,
-      stock,
-    });
-    return res
-      .status(200)
-      .json({message: `Se actualizo con los siguientes datos: ${product}`});
+    return res.status(200).redirect("/");
   }
-  return res.status(400).json({error: "No se proporciono ningun dato"});
+
+  return res.status(400).send("Faltan datos");
 };
 
-const deleteProduct = (req, res) => {
+const updateById = async (req, res) => {
   const {id} = req.params;
-  if (id) {
-    const product = model.deleteById(id);
-    if (product) {
-      return res
-        .status(200)
-        .json({message: `Se elimino el producto con id: ${id}`});
+  const {name, price, thumbnail} = req.body;
+
+  if (name && price && thumbnail) {
+    const result = model.updateProducto(id, {name, price, thumbnail});
+    if (result) {
+      return res.status(200).send("Producto actualizado");
     }
-    return res.status(400).json({error: "No se encontro el producto"});
+    return res.status(404).send("Producto no encontrado");
   }
-  return res.status(400).json({error: "No se proporciono ningun id"});
+
+  return res.status(400).send("Faltan datos");
+};
+
+const deleteById = async (req, res) => {
+  const {id} = req.params;
+
+  if (id) {
+    const result = await model.deleteProducto(id);
+
+    if (result) {
+      return res.status(200).json({message: "Producto eliminado"});
+    }
+    return res.status(404).json({message: "Producto no encontrado"});
+  }
+
+  return res.status(404).json({message: "Se debe proporcionar un id"});
 };
 
 module.exports = {
-  getAllProducts,
-  addProduct,
-  updateProduct,
-  deleteProduct,
+  getAll,
+  getById,
+  save,
+  updateById,
+  deleteById,
 };

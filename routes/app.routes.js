@@ -6,9 +6,9 @@ const routeProductPublic = require('./products/public/product.routes');
 
 const router = express.Router();
 
-router.use("/carrito", routeCart);
-router.use("/productos", routeProductPublic);
-router.use("/productos", authMiddleware, routerProductPrivate);
+router.use("/cart", routeCart);
+router.use("/products", routeProductPublic);
+router.use("/products", authMiddleware, routerProductPrivate);
 router.use("*", (req, res) => {
   res.status(404).json({
     error: -2,
