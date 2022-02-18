@@ -3,12 +3,13 @@ const cors = require('cors');
 const morgan = require('morgan');
 require('dotenv').config();
 const http = require("http");
+const DB = require("./database/index.js");
 
 const app = express();
 const server = http.createServer(app);
 const io = require("socket.io")(server);
 const path = require("path");
-const PORT = process.env.PORT || 3000;
+const { PORT, DATABASE } = require('./config/index');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -47,6 +48,8 @@ app.use(morgan('tiny'));
 app.use('/api', routes);
 
 server.listen(PORT, () => {
+  const db = new DB();
+  db.connect(DATABASE);
   console.log(`Server escuchando en el puerto ${PORT}.`);
 });
 

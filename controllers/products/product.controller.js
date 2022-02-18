@@ -1,4 +1,5 @@
-const {Product} = require("../../models/index");
+// const Product = require("../../models/products/product.model");
+const Product = require("../../daos/products/product.dao");
 const model = new Product("products");
 
 const getAll = async (req, res) => {
@@ -32,7 +33,7 @@ const updateById = async (req, res) => {
   const {name, price, thumbnail} = req.body;
 
   if (name && price && thumbnail) {
-    const result = model.updateProducto(id, {name, price, thumbnail});
+    const result = model.updateProduct(id, { name, price, thumbnail });
     if (result) {
       return res.status(200).send("Producto actualizado");
     }
@@ -46,7 +47,7 @@ const deleteById = async (req, res) => {
   const {id} = req.params;
 
   if (id) {
-    const result = await model.deleteProducto(id);
+    const result = await model.deleteProduct(id);
 
     if (result) {
       return res.status(200).json({message: "Producto eliminado"});

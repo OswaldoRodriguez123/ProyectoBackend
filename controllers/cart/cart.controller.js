@@ -37,7 +37,7 @@ const addProductToCart = (req, res) => {
   const {id, productId} = req.params;
 
   if (id && productId) {
-    const product = product.getAllOrById(productId);
+    const product = product.getById(productId);
     if (product) {
       const cart = model.addProduct(id, product);
       if (cart) {

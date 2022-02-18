@@ -1,5 +1,5 @@
 const configMariaDB = require("../../database/configMariaDB");
-class Products {
+class Product {
   constructor(tableName) {
     this.knex = require("knex")(configMariaDB);
     this.tableName = tableName;
@@ -53,7 +53,7 @@ class Products {
     }
   }
 
-  async updateProducto(id, product) {
+  async updateProduct(id, product) {
     try {
       await this.knex(this.tableName).where("id", id).update(product);
       return true;
@@ -63,7 +63,7 @@ class Products {
     }
   }
 
-  async deleteProducto(id) {
+  async deleteProduct(id) {
     try {
       await this.knex(this.tableName).where("id", id).del();
       return true;
@@ -74,4 +74,4 @@ class Products {
   }
 }
 
-module.exports = Products;
+module.exports = Product;
