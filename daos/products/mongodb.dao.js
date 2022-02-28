@@ -29,7 +29,7 @@ class ProductDAO {
     }
   }
 
-  async updateProduct(id, data) {
+  async updateById(id, data) {
     try {
       const product = await this.model.findByIdAndUpdate(
         id,
@@ -42,7 +42,7 @@ class ProductDAO {
     }
   }
 
-  async deleteProduct(id) {
+  async deleteById(id) {
     try {
       const product = await this.model.findByIdAndDelete(id);
       return product;

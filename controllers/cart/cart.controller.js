@@ -1,75 +1,69 @@
-const Cart = require('../../models/cart/cart.model');
+const { Product: modelProduct } = require("../../daos/index");
+const { Cart: modelCart } = require("../../daos/index");
 
-const model = new Cart();
-
-const createCart = (req, res) => {
-  const id = model.createCart();
-  return res.status(200).json({message: `Se creo el carrito con id: ${id}`});
+const save = async (req, res, next) => {
+  try {
+    const {state} = await modelCart.save();
+    return res.status(state.serverStatus).json({...state});
+  } catch (error) {
+    next(error);
+  }
 };
 
-const deleteCart = (req, res) => {
-  const {id} = req.params;
-  if (id) {
-    const cart = model.delete(id);
-    if (cart) {
-      return res
-        .status(200)
-        .json({message: `Se elimino el carrito con id: ${id}`});
+const addProductToCart = async (req, res, next) => {
+  try {
+    const {cartId, productId} = req.params;
+
+    if (cartId && productId) {
+      const dataProduct = await modelProduct.getAllDataOrById(productId);
+      console.log(dataProduct);
+
+      const {state} = await modelCart.addProduct(cartId, productId, dataProduct);
+
+      return res.status(state.serverStatus).json({...state});
     }
-    return res.status(400).json({error: "No se encontro el carrito"});
+    return res.status(400).json({error: "Falta algun ID", cartId, productId});
+  } catch (error) {
+    next(error);
   }
-  return res.status(400).json({error: "No se proporciono ningun id"});
 };
 
-const getAllProducts = (req, res) => {
-  const {id} = req.params;
-  if (id) {
-    const products = model.getAllProducts(id);
-    if (products.length > 0) {
-      return res.status(200).json(products);
-    }
-    return res.status(400).json({error: "No se encontraron productos"});
+const deleteById = async (req, res, next) => {
+  try {
+    const {cartId} = req.params;
+    const {state} = await modelCart.deleteById(cartId);
+    return res.status(state.serverStatus).json({...state});
+  } catch (error) {
+    next(error);
   }
-  return res.status(400).json({error: "No se proporciono ningun id"});
 };
 
-const addProductToCart = (req, res) => {
-  const {id, productId} = req.params;
-
-  if (id && productId) {
-    const product = product.getById(productId);
-    if (product) {
-      const cart = model.addProduct(id, product);
-      if (cart) {
-        return res
-          .status(200)
-          .json({message: `Se agrego el producto con id: ${productId}`});
-      }
-      return res.status(400).json({error: "No se encontro el carrito"});
-    }
-    return res.status(400).json({error: "No se encontro el producto"});
+const getAllProductsFromCart = async (req, res, next) => {
+  try {
+    const {cartId} = req.params;
+    const {state} = await modelCart.getAllProducts(cartId);
+    return res.status(state.serverStatus).json({...state});
+  } catch (error) {
+    next(error);
   }
-  return res.status(400).json({error: "No se proporciono ningun id"});
 };
 
-const deleteProduct = (req, res) => {
-  const {id, productId} = req.params;
-  if (id && productId) {
-    const product = model.deleteById(id, productId);
-    if (product) {
-      return res
-        .status(200)
-        .json({message: `Se elimino el producto con id: ${productId}`});
-    }
-    return res.status(400).json({error: "No se encontro el producto"});
+const deleteProductFromCart = async (req, res, next) => {
+  try {
+    const {cartId, productId} = req.params;
+
+    const {state} = await modelCart.deleteProductCart(cartId, productId);
+
+    return res.status(state.serverStatus).json({...state});
+  } catch (error) {
+    next(error);
   }
-  return res.status(400).json({error: "No se proporciono ningun id"});
 };
 
 module.exports = {
-  createCart,
-  deleteCart,
-  getAllProducts,
+  save,
+  deleteById,
+  getAllProductsFromCart,
   addProductToCart,
-  deleteProduct,
+  deleteProductFromCart,
 };

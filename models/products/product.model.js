@@ -53,7 +53,7 @@ class Product {
     }
   }
 
-  async updateProduct(id, product) {
+  async updateById(id, product) {
     try {
       await this.knex(this.tableName).where("id", id).update(product);
       return true;
@@ -63,7 +63,7 @@ class Product {
     }
   }
 
-  async deleteProduct(id) {
+  async deleteById(id) {
     try {
       await this.knex(this.tableName).where("id", id).del();
       return true;

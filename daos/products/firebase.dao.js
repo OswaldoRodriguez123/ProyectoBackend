@@ -1,35 +1,42 @@
-const Mongoose = require('mongoose');
-const MongoDBContainer = require("../../containers/mongodb.container");
+import FireBaseContainter from "../../containers/FireBaseContainer.js";
 
-const Schema = Mongoose.Schema;
-const collection = "products";
-
-const schema = new Schema({
-  id: Mongoose.ObjectId,
-  name: { type: String, required: true },
-  price: { type: Number, required: true },
-  thumbnail: { type: String, required: true },
-});
-
-module.exports = class ProductDAO extends MongoDBContainer {
+class productDAO extends FireBaseContainter {
   constructor() {
-    super(collection, schema);
+    super("products");
   }
 
   async getAll(productId) {
     try {
       if (productId) {
         const product = await super.getAllDataOrById(productId);
-        return {singleProduct: true, state: {product, serverStatus: 200}};
+        return {
+          singleProduct: true,
+          state: {
+            message: "Producto encontrado exitosamente",
+            productId,
+            product,
+            serverStatus: 200,
+          },
+        };
       }
       const products = await super.getAllDataOrById();
-      return {singleProduct: false, state: {products, serverStatus: 200}};
+      return {
+        singleProduct: false,
+        state: {
+          message: "Se encontraron todos los products de la coleccion",
+
+          products,
+          serverStatus: 200,
+        },
+      };
     } catch (error) {
       throw new Error(error);
     }
   }
+
   async save(data) {
-    if (typeof data === "object") {
+    const objectKeys = Object.keys(data);
+    if (typeof data === "object" && objectKeys.length === 6) {
       const product = await super.save(data);
       return {state: {message: "Producto creado con exito", product, serverStatus: 200}};
     }
@@ -46,7 +53,7 @@ module.exports = class ProductDAO extends MongoDBContainer {
           return {
             product: true,
             state: {
-              message: `Se actualizo el producto correctamente`,
+              message: `Se actualizo el product correctamente`,
               product,
               serverStatus: 200,
             },
@@ -65,7 +72,7 @@ module.exports = class ProductDAO extends MongoDBContainer {
     return {
       product: false,
       state: {
-        message: `No se encontro ningun product para actualizar, no se proporciono un ID`,
+        message: `No se encontro ningun producto para actualizar, no se proporciono un ID`,
         serverStatus: 400,
       },
     };
@@ -82,3 +89,5 @@ module.exports = class ProductDAO extends MongoDBContainer {
     return {state: {message: "No se proporciono ningun id", serverStatus: 400}};
   }
 }
+
+module.exports = productDAO;

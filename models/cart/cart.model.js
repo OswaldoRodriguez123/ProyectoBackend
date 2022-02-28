@@ -21,7 +21,7 @@ module.exports = class Cart {
     }
   }
 
-  createCart() {
+  save() {
     const cart = {
       id: uuidv4(),
       timeStamp: Date.now(),
@@ -80,15 +80,15 @@ module.exports = class Cart {
     return false;
   }
 
-  saveToJson() {
+  async saveToJson() {
     try {
-      fs.writeFile(
+      await fs.writeFile(
         "./data/cart.json",
         JSON.stringify(this.cart, null, 2),
         "utf-8"
       );
     } catch (error) {
-      console.log(error.message);
+      throw new Error(error);
     }
   }
 }
