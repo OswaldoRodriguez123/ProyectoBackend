@@ -15,16 +15,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const routes = require("./routes/app.routes");
+const chatDao = require("./daos/index");
+const getNormalizedData = require("./utils/normalizr");
 
-const { Chat } = require("./models/index");
-
-const chat = new Chat("chat");
-
-const emitMessage = () => {
-  const message = chat.getMessage();
-  message.then((data) => {
-    io.sockets.emit("chat", data);
-  });
+const emitMessage = async () => {
+  const mensaje = await chatDao.getAllDataOrById();
+  const normalizedData = getNormalizedData(mensaje);
+  io.sockets.emit("chat", normalizedData);
 };
 
 app.use(express.static(__dirname + "/public"));
@@ -37,7 +34,7 @@ io.on("connection", async (socket) => {
   emitMessage();
   socket.on("message", async (message) => {
     if (message.email) {
-      await chat.addMessage(message);
+      await chatDao.save(message);
       emitMessage();
     }
   });

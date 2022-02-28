@@ -1,4 +1,11 @@
 const { productDAO: model } = require("../../daos/index.js");
+const ProductMock = require("../../mocks/products/product.mock");
+const mock = new ProductMock("producto");
+
+const mockAll = (req, res, next) => {
+  const products = mock.populate(5);
+  res.status(200).json(products);
+};
 
 const getAll = async (req, res, next) => {
   try {
@@ -52,6 +59,7 @@ const deleteById = async (req, res, next) => {
 };
 
 module.exports = {
+  mockAll,
   getAll,
   getById,
   save,
