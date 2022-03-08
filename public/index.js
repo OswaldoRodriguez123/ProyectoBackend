@@ -1,10 +1,12 @@
 const socket = io();
-const button = document.getElementById("buttonSend");
+const $ = (selector) => document.querySelector(selector);
+const buttonSend = $("#buttonSend");
+const buttonLogout = $("#buttonLogout");
 
 const sendMessage = (e) => {
   e.preventDefault();
-  const inputMessage = document.getElementById("message");
-  const inputMail = document.getElementById("email");
+  const inputMessage = $("#message");
+  const inputMail = $("#email");
   const message = {
     email: inputMail.value,
     year: new Date(Date.now() + 0 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10).split('-').reverse().join('/'),
@@ -21,7 +23,10 @@ const sendMessage = (e) => {
   inputMessage.focus();
 };
 
-button.addEventListener("click", sendMessage);
+buttonSend.addEventListener("click", sendMessage);
+buttonLogout.addEventListener("click", () => {
+  window.location.href = "/logout";
+});
 
 socket.on("chat", (messages) => {
   const html = messages.map((message) => {
@@ -33,7 +38,7 @@ socket.on("chat", (messages) => {
   })
   .join("");
 
-  document.getElementById("messages").innerHTML = html;
+  $("#messages").innerHTML = html;
 });
 
 (async () => {
@@ -49,7 +54,7 @@ socket.on("chat", (messages) => {
       .then((data) => {
         const template = Handlebars.compile(data);
         const html = template({ products });
-        document.getElementById("products").innerHTML = html;
+        $("#products").innerHTML = html;
       });
   }
 })();

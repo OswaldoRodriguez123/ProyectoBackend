@@ -1,5 +1,5 @@
 const express = require('express');
-const { authMiddleware } = require('../middlewares/authMiddleware');
+const { routeAuth } = require('../../middlewares/auth.middleware');
 const routeCart = require('./cart/cart.routes');
 const routerProductPrivate = require('./products/private/product.routes');
 const routeProductPublic = require('./products/public/product.routes');
@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.use("/cart", routeCart);
 router.use("/products", routeProductPublic);
-router.use("/products", authMiddleware, routerProductPrivate);
+router.use("/products", routeAuth, routerProductPrivate);
 router.get("/products-test", routeProductTest);
 
 router.use("*", (req, res) => {
